@@ -3,6 +3,7 @@ using Ppr.Rest.Api.Models;
 
 namespace Ppr.Rest.Api.Validators
 {
+    // UserValidator sınıfı, User modeline uygulanacak doğrulama kurallarını tanımlar.
     public class UserValidator : AbstractValidator<User>
     {
         public UserValidator()

@@ -18,12 +18,13 @@ namespace Ppr.Rest.Api.Controllers
             _validator = validator;
         }
 
+        //Tüm kullanıcıları getiren GET endpointi
         [HttpGet]
         public ActionResult<ApiResponse<List<User>>> Get()
         {
             return Ok(new ApiResponse<List<User>>(users));
         }
-
+        //Belirli id deki kullanıcıyı getiren GET endpointi
         [HttpGet("{id}")]
         public ActionResult<ApiResponse<User>> Get(int id)
         {
@@ -33,10 +34,11 @@ namespace Ppr.Rest.Api.Controllers
 
             return Ok(new ApiResponse<User>(user));
         }
-
+        //Yeni bir kullanıcı eklemek için POST endpointi
         [HttpPost]
         public ActionResult<ApiResponse<User>> Post([FromBody] User user)
         {
+            //burada eklenecek kullanıcı fluentValidation ile doğrulanır ve ekleme işşlemi devam eder
             ValidationResult result = _validator.Validate(user);
 
             if (!result.IsValid)
@@ -48,7 +50,7 @@ namespace Ppr.Rest.Api.Controllers
             users.Add(user);
             return CreatedAtAction(nameof(Get), new { id = user.Id }, new ApiResponse<User>(user));
         }
-
+        //Mevcut bir kullanıcıyı güncelleyen PUT endpointi
         [HttpPut("{id}")]
         public ActionResult<ApiResponse<User>> Put(int id, [FromBody] User user)
         {
@@ -64,13 +66,13 @@ namespace Ppr.Rest.Api.Controllers
             {
                 return BadRequest(result.ToApiResponse<User>());
             }
-
+            //FluentValidation ile kontrol edildikten sonra bu kısımda güncelleme işlemi yapılır
             existingUser.Name = user.Name;
             existingUser.Email = user.Email;
             existingUser.Password = user.Password;
             return Ok(new ApiResponse<User>(existingUser));
         }
-
+        //Mevcut kullanıcıyı kısmen güncelleyen PATCH endpointi
         [HttpPatch("{id}")]
         public ActionResult<ApiResponse<User>> Patch(int id, [FromBody] User user)
         {
@@ -79,7 +81,7 @@ namespace Ppr.Rest.Api.Controllers
             {
                 return NotFound(new ApiResponse<User>("User not found."));
             }
-
+            //yalnızca dolu olan alanların güncelleme işlemi yapılır
             if (user.Name != null)
                 existingUser.Name = user.Name;
             if (user.Email != null)
@@ -89,7 +91,7 @@ namespace Ppr.Rest.Api.Controllers
 
             return Ok(new ApiResponse<User>(existingUser));
         }
-
+        //mevcut kayıtlı kullanıcıyı silen DELETE endpointi
         [HttpDelete("{id}")]
         public ActionResult<ApiResponse<List<User>>> Delete(int id)
         {
@@ -102,7 +104,7 @@ namespace Ppr.Rest.Api.Controllers
             users.Remove(user);
             return Ok(new ApiResponse<List<User>>(users));
         }
-
+        //Kullanıcıları isme veya email e göre filtreleyen listeleme endpointi
         [HttpGet("list")]
         public ActionResult<ApiResponse<List<User>>> List([FromQuery] string? name, [FromQuery] string? email)
         {
